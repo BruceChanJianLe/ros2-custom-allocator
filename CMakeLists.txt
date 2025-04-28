@@ -20,15 +20,35 @@ foreach(pkg IN LISTS dependencies)
   find_package(${pkg} REQUIRED)
 endforeach()
 
-# hello
+include(FetchContent)
+
+# pmrspy
+FetchContent_Declare(
+  pmrspy
+  GIT_REPOSITORY https://github.com/brucechanjianle/pmrspy.git
+  GIT_TAG master
+)
+FetchContent_MakeAvailable(pmrspy)
+
+# ros2 example
+# https://github.com/ros2/demos/blob/jazzy/demo_nodes_cpp/src/topics/allocator_tutorial_pmr.cpp
 add_executable(ros2_example
   ./src/ros2_example.cpp
 )
 target_include_directories(ros2_example PUBLIC include)
 ament_target_dependencies(ros2_example ${dependencies})
 
+# pmr_simple_example
+add_executable(pmr_simple_example
+./src/pmr_simple_example.cpp
+)
+target_include_directories(pmr_simple_example PUBLIC include)
+ament_target_dependencies(pmr_simple_example ${dependencies})
+target_link_libraries(pmr_simple_example pmrspy::pmrspy)
+
 install(TARGETS
   ros2_example
+  pmr_simple_example
   DESTINATION lib/${PROJECT_NAME}
 )
 
